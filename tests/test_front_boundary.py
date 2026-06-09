@@ -11,6 +11,8 @@ ALLOWED_QTS_IMPORTS = {
     ("qts.paper", "run_synthetic_paper_demo"),
     ("qts.simple", "run_synthetic_demo"),
     ("qts.strategies", "compare_momentum_to_equal_weight"),
+    ("qts.stooq", "load_stooq_research_config"),
+    ("qts.stooq", "run_stooq_etf_momentum_research"),
 }
 
 FORBIDDEN_CORE_NAMES = {
@@ -61,7 +63,42 @@ def test_frontend_uses_chinese_dashboard_copy() -> None:
     assert "本地交易驾驶舱" in text
     assert "运行所选流程" in text
     assert "本地模拟盘" in text
+    assert "Stooq 真实数据研究" in text
+    assert "真实数据文件未就绪" in text
     assert "关键指标" in text
+
+
+def test_stooq_raw_file_names_match_core_cache_convention() -> None:
+    from app import _stooq_raw_file_names
+
+    assert _stooq_raw_file_names(
+        ("SPY.US", "QQQ.US", "IWM.US", "TLT.US", "GLD.US"),
+        "2015-01-01",
+        "2025-12-31",
+    ) == [
+        "spy_us_2015-01-01_2025-12-31.csv",
+        "qqq_us_2015-01-01_2025-12-31.csv",
+        "iwm_us_2015-01-01_2025-12-31.csv",
+        "tlt_us_2015-01-01_2025-12-31.csv",
+        "gld_us_2015-01-01_2025-12-31.csv",
+    ]
+
+
+def test_missing_stooq_data_report_is_user_friendly(tmp_path: Path) -> None:
+    from app import _stooq_missing_data_report
+
+    report = _stooq_missing_data_report(
+        core_root=tmp_path,
+        config_path=tmp_path / "configs/stooq_etf_momentum.example.toml",
+        data_path=tmp_path / "data/processed/stooq_etf_eod.csv",
+        raw_file_names=["spy_us_2015-01-01_2025-12-31.csv"],
+    )
+
+    assert "真实数据文件未就绪" in report
+    assert "data/processed/stooq_etf_eod.csv" in report
+    assert "spy_us_2015-01-01_2025-12-31.csv" in report
+    assert "STOOQ_API_KEY" in report
+    assert "业务逻辑仍在 elvquant_core" in report
 
 
 def test_report_parser_extracts_metrics_and_daily_rows() -> None:
