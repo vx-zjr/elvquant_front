@@ -12,7 +12,7 @@ handling belong in `elvquant_core`.
 Install the core next to this repository:
 
 ```powershell
-cd ..\quant-trading-agent
+cd ..\elvquant_core
 .venv\Scripts\python -m pip install -e .
 ```
 
@@ -31,7 +31,7 @@ Run the local UI:
 .venv\Scripts\python -m streamlit run app.py
 ```
 
-By default the UI looks for the core at `../quant-trading-agent`. Override with
+By default the UI looks for the core at `../elvquant_core`. Override with
 `ELVQUANT_CORE_PATH` if your local checkout uses a different path.
 
 ## Quality Checks

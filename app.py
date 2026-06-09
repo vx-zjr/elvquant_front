@@ -74,7 +74,7 @@ def _artifact_viewer() -> None:
 
 
 def _core_root() -> Path:
-    return Path(os.environ.get("ELVQUANT_CORE_PATH", "../quant-trading-agent")).resolve()
+    return Path(os.environ.get("ELVQUANT_CORE_PATH", "../elvquant_core")).resolve()
 
 
 if __name__ == "__main__":
