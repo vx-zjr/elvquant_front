@@ -9,6 +9,7 @@ description = "Thin Streamlit client for elvquant_core local debugging."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "pandas>=2.2",
     "streamlit>=1.35",
 ]
 
