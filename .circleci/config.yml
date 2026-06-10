@@ -3,33 +3,28 @@ version: 2.1
 jobs:
   qa:
     docker:
-      - image: cimg/python:3.12
+      - image: cimg/node:24.11
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-front-pip-{{ checksum "pyproject.toml" }}
+            - v1-front-npm-{{ checksum "package.json" }}
       - run:
-          name: Install development dependencies
-          command: |
-            python -m venv .venv
-            . .venv/bin/activate
-            python -m pip install --upgrade pip
-            python -m pip install -e ".[dev]"
+          name: Install dependencies
+          command: npm install
       - save_cache:
-          key: v1-front-pip-{{ checksum "pyproject.toml" }}
+          key: v1-front-npm-{{ checksum "package.json" }}
           paths:
-            - ~/.cache/pip
+            - ~/.npm
       - run:
           name: Run tests
-          command: |
-            . .venv/bin/activate
-            pytest
+          command: npm run test
       - run:
           name: Run lint
-          command: |
-            . .venv/bin/activate
-            ruff check
+          command: npm run lint
+      - run:
+          name: Build
+          command: npm run build
 
 workflows:
   qa:
