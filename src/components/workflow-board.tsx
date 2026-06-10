@@ -3,6 +3,7 @@
 import { Activity, Database, FileText, Play, ShieldCheck } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { ExecutionLane } from "@/components/execution-lane";
 import type { Workflow } from "@/lib/contracts";
 import type { Locale } from "@/lib/i18n";
 import { dictionaries } from "@/lib/i18n";
@@ -73,6 +74,7 @@ export function WorkflowBoard({ workflows, locale }: WorkflowBoardProps) {
       <button className="button primary run-action" onClick={submit} disabled={isPending} type="button">
         <Play size={17} /> {isPending ? dictionary.running : dictionary.startRun}
       </button>
+      <ExecutionLane selected={selected} locale={locale} isPending={isPending} />
       {message ? <p className="inline-message">{message}</p> : null}
     </section>
   );

@@ -3,6 +3,8 @@ import { ArtifactViewer } from "@/components/artifact-viewer";
 import { EquityChart } from "@/components/equity-chart";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { MetricGrid } from "@/components/metric-grid";
+import { QuantVisuals } from "@/components/quant-visuals";
+import { RiskPosture } from "@/components/risk-posture";
 import { currentOwnerUserId } from "@/lib/auth";
 import { getRun } from "@/lib/core-api";
 import { dictionaries, normalizeLocale, statusLabel } from "@/lib/i18n";
@@ -34,6 +36,8 @@ export default async function RunPage({ params, searchParams }: RunPageProps) {
 
       <MetricGrid metrics={run.metrics} locale={locale} />
 
+      <RiskPosture report={run} locale={locale} />
+
       <div className="detail-grid">
         <section className="panel visual-panel">
           <div className="section-heading">
@@ -54,6 +58,8 @@ export default async function RunPage({ params, searchParams }: RunPageProps) {
           </dl>
         </section>
       </div>
+
+      <QuantVisuals report={run} locale={locale} />
 
       <div className="detail-grid secondary">
         <section className="panel">

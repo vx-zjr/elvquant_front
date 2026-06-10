@@ -16,6 +16,11 @@ service-token isolation need a backend-for-frontend boundary. If a future review
 proves Next.js cannot satisfy those needs, the replacement decision must be
 recorded here before code changes.
 
+The active UI direction is an operational quant cockpit: dense, scan-friendly,
+bilingual, and animated only where motion communicates system state. Visuals
+must be derived from structured report/API data rather than invented trading
+signals.
+
 ## Required Start Protocol
 
 Before editing, read:

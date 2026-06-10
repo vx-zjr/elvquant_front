@@ -2,6 +2,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { MetricGrid } from "@/components/metric-grid";
 import { RunTable } from "@/components/run-table";
 import { StooqStatus } from "@/components/stooq-status";
+import { SystemTelemetry } from "@/components/system-telemetry";
 import { WorkflowBoard } from "@/components/workflow-board";
 import { getRuns, getWorkflows } from "@/lib/core-api";
 import { currentOwnerUserId } from "@/lib/auth";
@@ -40,6 +41,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <div className="metric"><span className="muted">{dictionary.completedRuns}</span><strong>{completedCount}</strong></div>
         <div className="metric"><span className="muted">{dictionary.blockedRuns}</span><strong>{blockedCount}</strong></div>
       </section>
+
+      <SystemTelemetry workflows={workflows} runs={runs} locale={locale} />
 
       <div className="dashboard-grid">
         <WorkflowBoard workflows={workflows} locale={locale} />

@@ -22,3 +22,28 @@ Acceptance criteria:
   a run, open details, and inspect charts/artifacts.
 - No committed secret defaults exist for service tokens.
 - Documentation matches local debug commands and environment variables.
+
+## Task ID: FRONT-002
+
+Status: Pending
+Phase: Interaction polish
+Title: Add mature quant-system motion and dynamic visualization
+
+Scope:
+- Add a live-feeling market telemetry strip, execution lane, and system pulse
+  animations without adding fake trading logic.
+- Add interactive run-detail visualizations for equity, drawdown, allocation,
+  cash/cost timeline, and risk posture using only structured report data.
+- Add richer dashboard controls and visual feedback for workflow selection,
+  run launch, filters, and status changes.
+- Keep animation restrained and operational: motion should help scan state,
+  not become marketing decoration.
+
+Acceptance criteria:
+- Analysis helpers for drawdown, allocation, timeline, and workflow health have
+  tests.
+- Dashboard and run detail pages expose the new panels in both Chinese and
+  English.
+- Browser smoke verifies the dashboard and run detail render the dynamic panels.
+- `lint`, `test`, and `build` pass through the documented Node fallback commands
+  when npm shims are blocked.

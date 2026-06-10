@@ -13,6 +13,7 @@
   --warning: #e6b85c;
   --blue: #8ac7ff;
   --violet: #b5a7ff;
+  --amber: #f0c06a;
 }
 
 * {
@@ -125,6 +126,15 @@ h2 {
   gap: 18px;
 }
 
+.page-stack > * {
+  animation: rise-in 520ms ease both;
+}
+
+.page-stack > *:nth-child(2) { animation-delay: 40ms; }
+.page-stack > *:nth-child(3) { animation-delay: 80ms; }
+.page-stack > *:nth-child(4) { animation-delay: 120ms; }
+.page-stack > *:nth-child(5) { animation-delay: 160ms; }
+
 .hero-panel,
 .workflow-board,
 .insight-panel,
@@ -143,8 +153,11 @@ h2 {
   align-items: end;
   padding: 26px;
   background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(135deg, rgba(85, 194, 162, 0.12), transparent 34%),
     linear-gradient(180deg, #131b21, #0f1419);
+  background-size: 32px 32px, 32px 32px, auto, auto;
 }
 
 .hero-panel.compact {
@@ -231,6 +244,7 @@ h2 {
   color: var(--foreground);
   background: var(--panel-2);
   cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
 .workflow-card svg {
@@ -270,6 +284,13 @@ h2 {
   background: var(--accent);
   color: #07110e;
   border-color: transparent;
+  box-shadow: 0 0 0 0 rgba(85, 194, 162, 0.35);
+  transition: transform 160ms ease, box-shadow 220ms ease;
+}
+
+.button.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 6px rgba(85, 194, 162, 0.08);
 }
 
 .run-action {
@@ -295,6 +316,110 @@ h2 {
   display: block;
   margin-top: 8px;
   font-size: 22px;
+}
+
+.telemetry-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.telemetry-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 78px;
+  padding: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
+}
+
+.telemetry-card::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: scan-line 2.2s infinite linear;
+}
+
+.telemetry-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.telemetry-card strong {
+  display: block;
+  margin-top: 4px;
+  font-family: "Geist Mono", Consolas, monospace;
+}
+
+.telemetry-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(85, 194, 162, 0.1);
+  color: var(--accent);
+}
+
+.telemetry-card i {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 6px rgba(85, 194, 162, 0.1);
+  animation: pulse-dot 1.4s infinite ease-in-out;
+}
+
+.telemetry-card.warning i { background: var(--amber); box-shadow: 0 0 0 6px rgba(240, 192, 106, 0.11); }
+.telemetry-card.danger i { background: var(--danger); box-shadow: 0 0 0 6px rgba(238, 111, 121, 0.11); }
+.telemetry-card.neutral i { background: var(--blue); box-shadow: 0 0 0 6px rgba(138, 199, 255, 0.1); }
+
+.execution-lane {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.execution-step {
+  position: relative;
+  min-height: 62px;
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+}
+
+.execution-step.active {
+  color: var(--foreground);
+  border-color: rgba(85, 194, 162, 0.32);
+}
+
+.step-node {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: rgba(85, 194, 162, 0.1);
+  color: var(--accent);
+}
+
+.step-connector {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  color: rgba(85, 194, 162, 0.65);
 }
 
 .muted {
@@ -398,6 +523,152 @@ pre {
   padding: 16px;
   background: #0d1318;
 }
+
+.risk-posture {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 18px;
+  align-items: center;
+}
+
+.risk-posture.healthy svg { color: var(--accent); }
+.risk-posture.warning svg { color: var(--amber); }
+.risk-posture.blocked svg { color: var(--danger); }
+
+.health-ring {
+  --score: 0%;
+  display: grid;
+  place-items: center;
+  width: 108px;
+  height: 108px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, #101820 58%, transparent 59%),
+    conic-gradient(var(--accent) var(--score), rgba(255, 255, 255, 0.08) 0);
+}
+
+.health-ring strong {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.health-ring span {
+  margin-top: -24px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.risk-signal-row {
+  display: grid;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.risk-signal-row span {
+  color: var(--muted);
+}
+
+.risk-signal-row strong {
+  font-size: 30px;
+}
+
+.quant-visual-panel {
+  min-height: 300px;
+}
+
+.segmented-control {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.segmented-control button {
+  min-height: 30px;
+  border: 0;
+  border-radius: 6px;
+  padding: 0 10px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.segmented-control button.active {
+  color: #07110e;
+  background: var(--accent);
+}
+
+.drawdown-bars,
+.cash-cost-timeline {
+  display: flex;
+  align-items: end;
+  gap: 7px;
+  min-height: 190px;
+  padding-top: 22px;
+}
+
+.drawdown-bars span {
+  flex: 1;
+  min-width: 8px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, var(--danger), rgba(238, 111, 121, 0.25));
+  animation: bar-grow 620ms ease both;
+}
+
+.allocation-map {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.allocation-row {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 70px;
+  gap: 12px;
+  align-items: center;
+}
+
+.allocation-row div {
+  height: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.allocation-row i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--blue));
+  animation: width-grow 680ms ease both;
+}
+
+.allocation-row strong,
+.allocation-row span {
+  font-family: "Geist Mono", Consolas, monospace;
+}
+
+.timeline-column {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: end;
+  gap: 2px;
+  flex: 1;
+  min-width: 18px;
+  height: 190px;
+}
+
+.timeline-column span {
+  display: block;
+  border-radius: 5px 5px 0 0;
+  animation: bar-grow 620ms ease both;
+}
+
+.timeline-column .equity { background: var(--accent); }
+.timeline-column .cash { background: var(--blue); }
+.timeline-column .cost { background: var(--amber); }
 
 .chart-header,
 .chart-axis {
@@ -546,13 +817,55 @@ pre {
   50% { opacity: 1; }
 }
 
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scan-line {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(0.9); opacity: 0.75; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes bar-grow {
+  from { transform: scaleY(0.18); transform-origin: bottom; opacity: 0.4; }
+  to { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+}
+
+@keyframes width-grow {
+  from { transform: scaleX(0.18); transform-origin: left; }
+  to { transform: scaleX(1); transform-origin: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
+
 @media (max-width: 900px) {
   .hero-panel,
   .dashboard-grid,
   .detail-grid,
   .detail-grid.secondary,
-  .kpi-strip {
+  .kpi-strip,
+  .telemetry-strip,
+  .risk-posture {
     grid-template-columns: 1fr;
+  }
+
+  .execution-lane {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   h1 {

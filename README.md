@@ -60,7 +60,9 @@ the dashboard can be debugged before Clerk is provisioned. Production should use
 `AUTH_MODE=clerk` and derive the owner id from the authenticated Clerk session.
 
 The rebuilt UI includes run filtering, workflow cards, loading/error states,
-artifact browsing, Stooq status, and bilingual Chinese/English rendering.
+artifact browsing, Stooq status, bilingual Chinese/English rendering, animated
+system telemetry, risk posture panels, allocation views, drawdown visualization,
+and interactive chart surfaces.
 
 ## Vercel Target
 
