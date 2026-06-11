@@ -91,3 +91,10 @@ visual alignment with current backend/core breadth.
   `http://localhost:7890`; do not force-push or rewrite remote history.
 - Validation basis before direct publish: `python -m pytest -q` passed with 19 tests, `python -m
   ruff check` passed, and `npm.cmd run build` produced a successful Vite production build.
+- Published `main` directly to `vx-zjr/elvquant_front` on 2026-06-11 by fast-forwarding from the
+  old Streamlit branch tip to the React institutional cockpit line, then pushing through
+  `http://localhost:7890`.
+- Remote `main` was verified after push, and the feature branch was also updated so the GitHub
+  default branch no longer shows the initial Streamlit version.
+- Local debug health check remained available at `http://127.0.0.1:8000/api/health` with
+  `core_available: true` after the main-branch publish.

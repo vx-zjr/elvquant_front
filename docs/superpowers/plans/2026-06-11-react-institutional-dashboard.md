@@ -161,6 +161,6 @@ Run Python QA and frontend build in CircleCI.
 
 Run: `python -m pytest`, `python -m ruff check`, and `npm run build`.
 
-- [ ] **Step 4: Push and start local debug**
+- [x] **Step 4: Push and start local debug**
 
 Commit, push branch to GitHub with proxy `http://localhost:7890`, then start the local API/frontend debug process and share the local URL.
