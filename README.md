@@ -1,18 +1,46 @@
 # elvquant_front
 
-`elvquant_front` 是 `elvquant_core` 之上的中文 Streamlit 薄客户端，用于本地调试和体验研究流程。
+`elvquant_front` is the local React research cockpit for `elvquant_core`. It is an institutional-style
+thin client: dense, operational, and built for local research/debugging workflows.
 
-它不是交易引擎。前端只允许做三件事：
+It is not a trading engine. The frontend only does three things:
 
-- 选择本地配置和工作流
-- 调用 `elvquant_core` 暴露的公开入口
-- 渲染报告、图表、状态和原始输出
+- select local workflows and inspect readiness
+- call public APIs exposed by `elvquant_core`
+- render metrics, charts, reports, status, and raw output
 
-策略、风险控制、数据源校验、订单生成、执行模拟、记账、指标、券商路由和密钥处理都必须留在 `elvquant_core`。
+Strategy logic, risk controls, data preparation, order modeling, broker routing, accounting, and
+secret handling stay in `elvquant_core`.
 
-## 本地启动
+## Architecture
 
-默认目录结构：
+```text
+elvquant_front/
+  elvquant_front/
+    api.py          # FastAPI app and JSON endpoints
+    core_bridge.py  # only public qts.* imports, report parsing, artifact discovery
+  web/src/          # Vite + React + TypeScript cockpit
+  docs/             # durable project memory, plans, and iteration log
+```
+
+The React app talks to `/api/*`. In development, Vite proxies `/api` to FastAPI on port `8000`. In
+production/local single-server mode, FastAPI serves `web/dist` after `npm run build`.
+
+## Durable Project Memory
+
+Every task should start by reading:
+
+- `AGENTS.md`
+- `docs/PROJECT_MEMORY.md`
+- the active plan in `docs/superpowers/plans/`
+- `docs/ITERATION_LOG.md`
+
+Update those docs whenever architecture, workflow, validation, or known gaps change. The project is
+intentionally managed through repo documents instead of relying on model memory alone.
+
+## Local Setup
+
+Default sibling layout:
 
 ```text
 work/
@@ -20,14 +48,16 @@ work/
   elvquant_front/
 ```
 
-安装 core：
+Install core first:
 
 ```powershell
 cd ..\elvquant_core
+py -m venv .venv
+.\.venv\Scripts\python -m pip install --upgrade pip
 .\.venv\Scripts\python -m pip install -e .
 ```
 
-安装前端：
+Install this frontend API:
 
 ```powershell
 cd ..\elvquant_front
@@ -37,68 +67,109 @@ py -m venv .venv
 .\.venv\Scripts\python -m pip install -e ..\elvquant_core
 ```
 
-运行 UI：
+Install web dependencies:
 
 ```powershell
-.\.venv\Scripts\python -m streamlit run app.py --server.port 8501
+npm ci
 ```
 
-打开：
+If Windows has no usable `npm` on `PATH`, create a repo-local Node/npm with `nodeenv`:
 
-```text
-http://localhost:8501
+```powershell
+.\.venv\Scripts\python -m pip install nodeenv
+.\.venv\Scripts\python -m nodeenv --node=24.14.0 --force .nodeenv
+$env:PATH=(Resolve-Path .nodeenv\Scripts).Path + ";" + $env:PATH
+npm.cmd ci
 ```
 
-如果 core 不在默认相邻目录，可以设置：
+When using a local proxy, set it before installs or pushes:
+
+```powershell
+$env:HTTP_PROXY="http://localhost:7890"
+$env:HTTPS_PROXY="http://localhost:7890"
+```
+
+If core is not in the default sibling directory, set:
 
 ```powershell
 $env:ELVQUANT_CORE_PATH="C:\path\to\elvquant_core"
 ```
 
-## Stooq 真实数据研究
+## Run Locally
 
-前端已经提供 `Stooq 真实数据研究` 工作流，但真实数据的准备仍然发生在 core 中。
+Terminal 1, start the FastAPI bridge:
 
-前端会读取：
+```powershell
+.\.venv\Scripts\python -m uvicorn elvquant_front.api:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Terminal 2, start the React dev server:
+
+```powershell
+npm.cmd run dev
+```
+
+Open:
+
+```text
+http://127.0.0.1:5173
+```
+
+Single-server build mode:
+
+```powershell
+npm.cmd run build
+.\.venv\Scripts\python -m uvicorn elvquant_front.api:app --host 127.0.0.1 --port 8000
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Stooq Real Data Research
+
+The cockpit exposes the Stooq real-data research workflow, but real data preparation remains in core.
+
+The frontend checks:
 
 ```text
 elvquant_core/configs/stooq_etf_momentum.example.toml
-```
-
-并检查标准化数据是否存在：
-
-```text
 elvquant_core/data/processed/stooq_etf_eod.csv
 ```
 
-如果文件不存在，UI 会显示中文状态和预计原始 CSV 文件名，不会把 traceback 直接扔给你。下载、标准化、point-in-time 校验和研究计算都留在 `elvquant_core`。
+If the processed file is missing, the UI displays Chinese operator-safe status and expected raw CSV
+cache names. Downloading, standardization, point-in-time validation, and research calculation stay in
+`elvquant_core`.
 
-如果 Stooq 要求 `apikey`，只在 core 的运行环境里设置 `STOOQ_API_KEY`，或放进 core 仓库中被 gitignore 的本地 `.env`。不要写进前端、不要写进提交配置、不要提交真实 key。
+If Stooq requires an API key, set `STOOQ_API_KEY` only in the core runtime environment or a core-side
+gitignored `.env`. Do not commit keys or write them into frontend files.
 
-当前默认原始缓存文件约定：
-
-```text
-elvquant_core/data/raw/stooq/spy_us_2015-01-01_2025-12-31.csv
-elvquant_core/data/raw/stooq/qqq_us_2015-01-01_2025-12-31.csv
-elvquant_core/data/raw/stooq/iwm_us_2015-01-01_2025-12-31.csv
-elvquant_core/data/raw/stooq/tlt_us_2015-01-01_2025-12-31.csv
-elvquant_core/data/raw/stooq/gld_us_2015-01-01_2025-12-31.csv
-```
-
-## 质量检查
+## Quality Gates
 
 ```powershell
-.\.venv\Scripts\python -m pytest
-.\.venv\Scripts\python -m ruff check
+python -m pytest
+python -m ruff check
+npm.cmd run build
 ```
 
-## 边界铁律
+On this Codex desktop host, the npm build may need the repo-local Node/npm first:
 
-如果前端需要新增业务动作，先在 `elvquant_core` 中实现并暴露公开入口，然后前端再调用这个入口。
+```powershell
+$env:PATH=(Resolve-Path .nodeenv\Scripts).Path + ";" + $env:PATH
+npm.cmd run build
+```
 
-前端测试会检查：
+The tests verify:
 
-- 只能导入允许的 core 公开入口
-- 不能构造交易核心对象
-- 不能写入密钥值
-- 必须保留中文本地调试文案
+- durable documentation exists and points future work to project memory
+- only allowed public `qts.*` runner/config APIs are imported
+- forbidden core business objects are not constructed in the frontend bridge
+- no obvious secret assignment strings exist in frontend/bridge files
+- report parsing, Stooq missing-data messaging, artifact discovery, and API shapes stay stable
+
+## Boundary Rule
+
+If the frontend needs a new business action, implement and expose it in `elvquant_core` first. Then
+consume that public entrypoint from `elvquant_front/core_bridge.py`.

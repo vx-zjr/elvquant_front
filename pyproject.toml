@@ -5,22 +5,27 @@ build-backend = "hatchling.build"
 [project]
 name = "elvquant-front"
 version = "0.1.0"
-description = "Thin Streamlit client for elvquant_core local debugging."
+description = "Institutional React cockpit with a thin FastAPI bridge for elvquant_core local debugging."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "pandas>=2.2",
-    "streamlit>=1.35",
+    "fastapi>=0.115",
+    "pydantic>=2.7",
+    "uvicorn[standard]>=0.30",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "httpx>=0.27",
     "pytest>=8.2",
     "ruff>=0.5",
 ]
 
+[project.scripts]
+elvquant-front = "elvquant_front.api:main"
+
 [tool.hatch.build.targets.wheel]
-only-include = ["app.py"]
+only-include = ["app.py", "elvquant_front"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

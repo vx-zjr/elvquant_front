@@ -3,7 +3,8 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-APP = Path("app.py")
+BRIDGE = Path("elvquant_front/core_bridge.py")
+APP_TSX = Path("web/src/App.tsx")
 
 ALLOWED_QTS_IMPORTS = {
     ("qts.historical", "run_historical_smoke"),
@@ -31,7 +32,7 @@ FORBIDDEN_CORE_NAMES = {
 
 
 def test_frontend_imports_only_public_core_runners() -> None:
-    tree = ast.parse(APP.read_text(encoding="utf-8"))
+    tree = ast.parse(BRIDGE.read_text(encoding="utf-8"))
     imports: set[tuple[str, str]] = set()
 
     for node in ast.walk(tree):
@@ -43,35 +44,36 @@ def test_frontend_imports_only_public_core_runners() -> None:
 
 
 def test_frontend_does_not_construct_core_business_objects() -> None:
-    tree = ast.parse(APP.read_text(encoding="utf-8"))
+    tree = ast.parse(BRIDGE.read_text(encoding="utf-8"))
     names = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
 
     assert names.isdisjoint(FORBIDDEN_CORE_NAMES)
 
 
 def test_frontend_does_not_contain_secret_values() -> None:
-    text = APP.read_text(encoding="utf-8").lower()
+    text = BRIDGE.read_text(encoding="utf-8").lower() + APP_TSX.read_text(encoding="utf-8").lower()
 
     assert "api_key =" not in text
     assert "secret =" not in text
     assert "password =" not in text
 
 
-def test_frontend_uses_chinese_dashboard_copy() -> None:
-    text = APP.read_text(encoding="utf-8")
+def test_frontend_uses_chinese_operator_copy() -> None:
+    bridge_text = BRIDGE.read_text(encoding="utf-8")
+    app_text = APP_TSX.read_text(encoding="utf-8")
 
-    assert "本地交易驾驶舱" in text
-    assert "运行所选流程" in text
-    assert "本地模拟盘" in text
-    assert "Stooq 真实数据研究" in text
-    assert "真实数据文件未就绪" in text
-    assert "关键指标" in text
+    assert "\u672c\u5730\u6a21\u62df\u76d8" in bridge_text
+    assert "Stooq \u771f\u5b9e\u6570\u636e\u7814\u7a76" in bridge_text
+    assert "\u771f\u5b9e\u6570\u636e\u6587\u4ef6\u672a\u5c31\u7eea" in bridge_text
+    assert "\u7814\u7a76\u9a7e\u9a76\u8231" in app_text
+    assert "\u8fd0\u884c\u6240\u9009\u6d41\u7a0b" in app_text
+    assert "\u5173\u952e\u6307\u6807" in app_text
 
 
 def test_stooq_raw_file_names_match_core_cache_convention() -> None:
-    from app import _stooq_raw_file_names
+    from elvquant_front.core_bridge import stooq_raw_file_names
 
-    assert _stooq_raw_file_names(
+    assert stooq_raw_file_names(
         ("SPY.US", "QQQ.US", "IWM.US", "TLT.US", "GLD.US"),
         "2015-01-01",
         "2025-12-31",
@@ -85,26 +87,26 @@ def test_stooq_raw_file_names_match_core_cache_convention() -> None:
 
 
 def test_missing_stooq_data_report_is_user_friendly(tmp_path: Path) -> None:
-    from app import _stooq_missing_data_report
+    from elvquant_front.core_bridge import stooq_missing_data_report
 
-    report = _stooq_missing_data_report(
+    report = stooq_missing_data_report(
         core_root=tmp_path,
         config_path=tmp_path / "configs/stooq_etf_momentum.example.toml",
         data_path=tmp_path / "data/processed/stooq_etf_eod.csv",
         raw_file_names=["spy_us_2015-01-01_2025-12-31.csv"],
     )
 
-    assert "真实数据文件未就绪" in report
+    assert "\u771f\u5b9e\u6570\u636e\u6587\u4ef6\u672a\u5c31\u7eea" in report
     assert "data/processed/stooq_etf_eod.csv" in report
     assert "spy_us_2015-01-01_2025-12-31.csv" in report
     assert "STOOQ_API_KEY" in report
-    assert "业务逻辑仍在 elvquant_core" in report
+    assert "\u4e1a\u52a1\u903b\u8f91\u4ecd\u5728 elvquant_core" in report
 
 
 def test_report_parser_extracts_metrics_and_daily_rows() -> None:
-    from app import _parse_report_text
+    from elvquant_front.core_bridge import parse_report_text
 
-    parsed = _parse_report_text(
+    parsed = parse_report_text(
         "\n".join(
             [
                 "run_id: paper-synthetic-20260101-20260105",
