@@ -83,3 +83,9 @@ visual alignment with current backend/core breadth.
   Execution Ladder, Risk Board, Scenario Matrix, Report Surface, and Audit Stream.
 - Added hover/active transitions, live pulse animation, panel entrance motion, animated loading icon,
   richer responsive layout, and stronger hierarchy.
+
+### Main Branch Publish
+
+- User clarified that the GitHub main branch should be updated directly, not only the feature branch.
+- Next action: fast-forward `main` to this branch and push `origin/main` through proxy
+  `http://localhost:7890`.
