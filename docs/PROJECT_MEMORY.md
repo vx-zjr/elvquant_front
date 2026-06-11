@@ -9,6 +9,10 @@ update it whenever the product direction, architecture, workflow, or validation 
 institutional quant research workstation: dense, calm, fast to scan, precise with status, and built
 for repeated research/debugging workflows rather than marketing presentation.
 
+Design direction after 2026-06-11 review: UI/UX quality should lead backend alignment for the next
+phase. The cockpit should feel closer to a top-tier quant research and trading workstation even when
+some panels are UI-derived or deterministic placeholders from the current API state.
+
 The current target is a React + TypeScript cockpit backed by a thin Python API. The UI should make
 these workflows first-class:
 

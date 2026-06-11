@@ -48,3 +48,38 @@ stays in `elvquant_core`.
 
 - Push branch to `vx-zjr/elvquant_front` using proxy `localhost:7890`.
 - Start local debugging server for user review.
+
+## 2026-06-11 - Institutional UI/UX Upgrade
+
+### Intent
+
+Second-pass design upgrade after review feedback: the current React cockpit is functional but still
+not professional enough for the bar of a top-tier quantitative institution. This pass prioritizes
+front-end experience, information architecture, motion, and workstation completeness over strict
+visual alignment with current backend/core breadth.
+
+### Decisions
+
+- Keep the FastAPI/core bridge intact.
+- Let the frontend expose professional research-workstation surfaces first: execution ladder, risk
+  board, scenario matrix, latency/heartbeat, audit stream, workflow search, denser metric deck, and
+  stronger report console.
+- Use CSS transitions and keyframes for subtle operational motion without adding animation libraries.
+
+### Validation Notes
+
+- Red check: `python -m pytest tests/test_front_boundary.py -q` failed until professional
+  workstation surfaces were added.
+- Browser QA: desktop viewport 1440x900 renders command deck, tape, system grid, metric deck,
+  Execution Ladder, Risk Board, Scenario Matrix, and Audit Stream without first-viewport overlap.
+- `python -m pytest -q`: 19 passed, 1 FastAPI/Starlette deprecation warning.
+- `python -m ruff check`: all checks passed.
+- `npm.cmd run build`: Vite build passed.
+
+### Completed
+
+- Rebuilt the cockpit shell into a denser institutional workstation.
+- Added workflow search, market/status tape, expanded system telemetry, professional metric deck,
+  Execution Ladder, Risk Board, Scenario Matrix, Report Surface, and Audit Stream.
+- Added hover/active transitions, live pulse animation, panel entrance motion, animated loading icon,
+  richer responsive layout, and stronger hierarchy.

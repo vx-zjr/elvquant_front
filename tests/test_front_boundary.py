@@ -70,6 +70,17 @@ def test_frontend_uses_chinese_operator_copy() -> None:
     assert "\u5173\u952e\u6307\u6807" in app_text
 
 
+def test_frontend_exposes_institutional_workstation_surfaces() -> None:
+    app_text = APP_TSX.read_text(encoding="utf-8")
+
+    assert "workflow-search" in app_text
+    assert "Execution Ladder" in app_text
+    assert "Risk Board" in app_text
+    assert "Scenario Matrix" in app_text
+    assert "Audit Stream" in app_text
+    assert "Latency" in app_text
+
+
 def test_stooq_raw_file_names_match_core_cache_convention() -> None:
     from elvquant_front.core_bridge import stooq_raw_file_names
 
