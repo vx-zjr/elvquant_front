@@ -87,5 +87,7 @@ visual alignment with current backend/core breadth.
 ### Main Branch Publish
 
 - User clarified that the GitHub main branch should be updated directly, not only the feature branch.
-- Next action: fast-forward `main` to this branch and push `origin/main` through proxy
-  `http://localhost:7890`.
+- Publish strategy: fast-forward `main` to this branch and push `origin/main` through proxy
+  `http://localhost:7890`; do not force-push or rewrite remote history.
+- Validation basis before direct publish: `python -m pytest -q` passed with 19 tests, `python -m
+  ruff check` passed, and `npm.cmd run build` produced a successful Vite production build.
